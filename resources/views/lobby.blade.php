@@ -15,6 +15,10 @@
                 width: 100%;
                 text-align: center;
             }
+
+            .bullets {
+              position: absolute;
+            }
         </style>
     </head>
     <body>
@@ -42,19 +46,19 @@
                         <div class="twelve wide column">
                             <div id="game-area" class="ui segment">
                                 <div class="container-buttons">
-                                    <button class="ui icon red button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon orange button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon yellow button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon olive button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon green button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon teal button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon blue button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon violet button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon purple button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon pink button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon brown button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon grey button"><i class="arrow up icon"></i></button>
-                                    <button class="ui icon black button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon red button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon orange button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon yellow button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon olive button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon green button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon teal button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon blue button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon violet button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon purple button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon pink button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon brown button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon grey button"><i class="arrow up icon"></i></button>
+                                    <button @click="fire" class="ui icon black button"><i class="arrow up icon"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -63,6 +67,7 @@
             </div>
         </div>
         <script src="{{URL::to('js/vue.js')}}"></script>
+        <script src="{{URL::to('js/TweenMax.min.js')}}"></script>
         <script>
             var conn = new WebSocket('ws://localhost:8080');
 
@@ -77,6 +82,17 @@
                       conn.send(this.message);
                       this.messages.push({data: this.message});
                       this.message = '';
+                  },
+                  fire(e) {
+                      var bullet = document.createElement('button');
+                      bullet.className = e.currentTarget.className + ' bullets';
+                      e.currentTarget.append(bullet);
+                      TweenMax.set(bullet, {marginLeft: '-19px'});
+                      TweenMax.to(bullet, 0.6, {top: '-450px', onComplete: function() {
+                          TweenMax.to(bullet, 1.5, { top: '-200px', opacity: 0, ease: Power0.easeNone, rotation: 360, onComplete: function () {
+                              bullet.remove();
+                          }});
+                      }});
                   }
                 },
                 created() {
