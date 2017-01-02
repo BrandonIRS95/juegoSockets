@@ -36,10 +36,13 @@
                 <div class="ui grid">
                     <div class="five wide column">
                         <div id="chat-area" class="ui segment">
-                            <div id="chatContainer" style="height: 422px;overflow: auto; margin-bottom: 10px;">
-
-                                    <div v-for="message in messages">@{{message.data}}</div>
-
+                            <div ref="chatContainer" style="height: 422px;overflow-y: auto; margin-bottom: 10px;">
+                                <div class="ui list">
+                                    <div class="item" v-for="message in messages">
+                                        <div class="header">New York City</div>
+                                        @{{message.data}}
+                                    </div>
+                                </div>
                             </div>
                             <div class="ui fluid action input">
                                 <input v-on:keyup.enter="sendMessage" v-model="message" type="text" placeholder="Write...">
@@ -154,8 +157,10 @@
                       conn.send(mess);
                       this.messages.push({data: this.message});
                       this.message = '';
-                      var chatCont = document.getElementById('chatContainer');
-                      chatCont.scrollTop = chatCont.scrollHeight - chatCont.clientHeight;
+                      this.$nextTick(function () {
+                          var chatCont = this.$refs.chatContainer;
+                          chatCont.scrollTop = chatCont.scrollHeight;
+                      });
                   },
                   fire(obj, e, color) {
                       conn.send('{ "type" : "bullet", "color" : "'+color+'"}');
