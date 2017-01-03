@@ -20,6 +20,17 @@ class Chat implements MessageComponentInterface
         $this->clients->attach($conn);
 
         echo "New connection! ({$conn->resourceId})\n";
+
+        $msg = '{ "type":"connection", "users": '.(count($this->clients) - 1).'}';
+
+        foreach ($this->clients as $client) {
+            if ($conn !== $client) {
+                // The sender is not the receiver, send to each client connected
+                $client->send($msg);
+            }
+        }
+
+        $client->send($msg);
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
