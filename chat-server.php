@@ -4,7 +4,7 @@ use App\Http\Controllers\Chat;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 
-require dirname(__DIR__) . '/juegoSocketsGit/vendor/autoload.php';
+require dirname(__DIR__) . '/juegoSockets/vendor/autoload.php';
 
 $server = IoServer::factory(
     new HttpServer(

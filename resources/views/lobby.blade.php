@@ -52,84 +52,93 @@
                         </div>
                     </h2>
                 </div>
-                <div class="ui segment" v-if="!logged">
-                    <div class="ui fluid action input">
-                        <input v-on:keyup.enter="toGame" v-model="user" type="text" placeholder="Write your user name">
-                        <button @click="toGame" type="button" class="ui button">Enter</button>
+                <div v-if="!empty">
+                    <div class="ui segment" v-if="!logged">
+                        <div class="ui fluid action input">
+                            <input v-on:keyup.enter="toGame" v-model="user" type="text" placeholder="Write your user name">
+                            <button @click="toGame" type="button" class="ui button">Enter</button>
+                        </div>
+                    </div>
+                    <div class="ui grid" v-else>
+                        <div class="five wide column">
+                            <div id="chat-area" class="ui segment">
+                                <div ref="chatContainer" style="height: 422px;overflow-y: auto; margin-bottom: 10px;">
+                                    <div class="ui list">
+                                        <div class="item" v-for="message in messages">
+                                            <div class="header">@{{ message.user }}</div>
+                                            @{{message.data}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui fluid action input">
+                                    <input v-on:keyup.enter="sendMessage" v-model="message" type="text" placeholder="Write...">
+                                    <button @click="sendMessage" type="button" class="ui button">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eleven wide column">
+                            <div id="game-area" class="ui segment">
+                                <div v-if="!startGame" class="ui active dimmer">
+                                    <div v-if="!opponentLogged" class="ui indeterminate text loader">Waiting for opponent</div>
+                                    <button id="readyBtn" v-else @click="readyGame" class="massive ui green button">
+                                        @{{ ready === false ? 'READY' : 'Waiting for your opponent...' }}
+                                    </button>
+                                </div>
+                                <div class="container-buttons" style="bottom: auto; top: 12px;">
+                                    <div class="ui container">
+                                        <div class="ui progress" :class="opponentClass" style="margin-left: 92px; margin-right: 97px;">
+                                            <div class="bar" :style="{width: opponentHealth + '%'}">
+                                                <div class="progress">@{{ opponentHealth }}%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ui container">
+                                        <button ref="myBtn0" @click="fireDown(red, $event)" class="ui icon red button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn1" @click="fireDown(orange, $event)" class="ui icon orange button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn2" @click="fireDown(yellow,$event)" class="ui icon yellow button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn3" @click="fireDown(olive,$event)" class="ui icon olive button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn4" @click="fireDown(green,$event)" class="ui icon green button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn5" @click="fireDown(teal,$event)" class="ui icon teal button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn6" @click="fireDown(blue,$event)" class="ui icon blue button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn7" @click="fireDown(violet,$event)" class="ui icon violet button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn8" @click="fireDown(purple,$event)" class="ui icon purple button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn9" @click="fireDown(pink,$event)" class="ui icon pink button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn10" @click="fireDown(brown,$event)" class="ui icon brown button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn11" @click="fireDown(grey,$event)" class="ui icon grey button"><i class="arrow down icon"></i></button>
+                                        <button ref="myBtn12" @click="fireDown(black,$event)" class="ui icon black button"><i class="arrow down icon"></i></button>
+                                    </div>
+                                </div>
+                                <div class="container-buttons">
+                                    <div class="ui container">
+                                        <button @click="fire(red, $event, 'red')" class="ui icon red button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(orange,$event, 'orange')" class="ui icon orange button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(yellow,$event, 'yellow')" class="ui icon yellow button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(olive,$event, 'olive')" class="ui icon olive button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(green,$event, 'green')" class="ui icon green button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(teal,$event, 'teal')" class="ui icon teal button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(blue,$event, 'blue')" class="ui icon blue button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(violet,$event, 'violet')" class="ui icon violet button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(purple,$event, 'purple')" class="ui icon purple button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(pink,$event, 'pink')" class="ui icon pink button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(brown,$event, 'brown')" class="ui icon brown button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(grey,$event, 'grey')" class="ui icon grey button"><i class="arrow up icon"></i></button>
+                                        <button @click="fire(black,$event, 'black')" class="ui icon black button"><i class="arrow up icon"></i></button>
+                                    </div>
+                                    <div class="ui container">
+                                        <div class="ui progress" :class="yourClass" style="margin-top: 20px; margin-left: 92px; margin-right: 97px; margin-bottom: 0;">
+                                            <div class="bar" :style="{width: yourHealth + '%'}">
+                                                <div class="progress">@{{yourHealth}}%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="ui grid" v-else>
-                    <div class="five wide column">
-                        <div id="chat-area" class="ui segment">
-                            <div ref="chatContainer" style="height: 422px;overflow-y: auto; margin-bottom: 10px;">
-                                <div class="ui list">
-                                    <div class="item" v-for="message in messages">
-                                        <div class="header">@{{ message.user }}</div>
-                                        @{{message.data}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="ui fluid action input">
-                                <input v-on:keyup.enter="sendMessage" v-model="message" type="text" placeholder="Write...">
-                                <button @click="sendMessage" type="button" class="ui button">Send</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="eleven wide column">
-                        <div id="game-area" class="ui segment">
-                            <div class="ui active dimmer">
-                                <div v-if="!opponentLogged" class="ui indeterminate text loader">Waiting for opponent</div>
-                                <button id="readyBtn" v-else class="massive ui green button">READY</button>
-                            </div>
-                            <div class="container-buttons" style="bottom: auto; top: 12px;">
-                                <div class="ui container">
-                                    <div class="ui progress" :class="opponentClass" style="margin-left: 92px; margin-right: 97px;">
-                                        <div class="bar" :style="{width: opponentHealth + '%'}">
-                                            <div class="progress">@{{ opponentHealth }}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="ui container">
-                                    <button ref="myBtn0" @click="fireDown(red, $event)" class="ui icon red button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn1" @click="fireDown(orange, $event)" class="ui icon orange button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn2" @click="fireDown(yellow,$event)" class="ui icon yellow button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn3" @click="fireDown(olive,$event)" class="ui icon olive button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn4" @click="fireDown(green,$event)" class="ui icon green button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn5" @click="fireDown(teal,$event)" class="ui icon teal button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn6" @click="fireDown(blue,$event)" class="ui icon blue button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn7" @click="fireDown(violet,$event)" class="ui icon violet button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn8" @click="fireDown(purple,$event)" class="ui icon purple button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn9" @click="fireDown(pink,$event)" class="ui icon pink button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn10" @click="fireDown(brown,$event)" class="ui icon brown button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn11" @click="fireDown(grey,$event)" class="ui icon grey button"><i class="arrow down icon"></i></button>
-                                    <button ref="myBtn12" @click="fireDown(black,$event)" class="ui icon black button"><i class="arrow down icon"></i></button>
-                                </div>
-                            </div>
-                            <div class="container-buttons">
-                                <div class="ui container">
-                                    <button @click="fire(red, $event, 'red')" class="ui icon red button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(orange,$event, 'orange')" class="ui icon orange button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(yellow,$event, 'yellow')" class="ui icon yellow button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(olive,$event, 'olive')" class="ui icon olive button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(green,$event, 'green')" class="ui icon green button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(teal,$event, 'teal')" class="ui icon teal button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(blue,$event, 'blue')" class="ui icon blue button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(violet,$event, 'violet')" class="ui icon violet button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(purple,$event, 'purple')" class="ui icon purple button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(pink,$event, 'pink')" class="ui icon pink button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(brown,$event, 'brown')" class="ui icon brown button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(grey,$event, 'grey')" class="ui icon grey button"><i class="arrow up icon"></i></button>
-                                    <button @click="fire(black,$event, 'black')" class="ui icon black button"><i class="arrow up icon"></i></button>
-                                </div>
-                                <div class="ui container">
-                                    <div class="ui progress" :class="yourClass" style="margin-top: 20px; margin-left: 92px; margin-right: 97px; margin-bottom: 0;">
-                                        <div class="bar" :style="{width: yourHealth + '%'}">
-                                            <div class="progress">@{{yourHealth}}%</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div v-else class="ui warning message">
+                    <div class="header">
+                        Sorry, channel full.
                     </div>
                 </div>
 
@@ -137,7 +146,7 @@
         </div>
         <script src="{{URL::to('js/TweenMax.min.js')}}"></script>
         <script>
-            var conn = new WebSocket('ws://localhost:8080');
+            var conn = new WebSocket('ws://brandonirs.com:5512');
 
             new Vue({
                 el: "#app",
@@ -145,11 +154,13 @@
                     messages: [],
                     message: '',
                     logged: false,
+                    empty: false,
                     user: '',
                     opponentLogged: false,
                     opponentHealth: 100,
                     yourHealth: 100,
                     ready: false,
+                    opponentReady: false,
                     red: {
                         goodBullets: [],
                         badBullets: []
@@ -236,7 +247,10 @@
                         chatCont.scrollTop = chatCont.scrollHeight;
                     },
                     toGame() {
-                      if(this.user != '') this.logged = true;
+                      if(this.user != '') {
+                          conn.send('{ "type" : "logged"}');
+                          this.logged = true;
+                      }
                     },
                     fireDown(obj, e) {
                         var self = this;
@@ -252,6 +266,10 @@
                             arrayBullets.splice(0,1);
                             bullet.remove();
                         }});
+                    },
+                    readyGame() {
+                      conn.send('{ "type" : "ready"}');
+                      this.ready = true;
                     },
                     collision(obj) {
                         //console.log(this.goodBullets[0].getBoundingClientRect().top);
@@ -288,6 +306,10 @@
                         if(health >= 70) return 'success';
                         if(health >= 30) return 'warning';
                         if(health < 30) return 'error';
+                    },
+                    startGame() {
+                        if(this.ready && this.opponentReady) return true;
+                        else return false;
                     }
                 },
                 created() {
@@ -348,8 +370,19 @@
                             break;
                             case 'connection':
                                 console.log(data);
-                                if(data.users > 0) self.opponentLogged = true;
+                                if(data.users > 2) {
+                                    self.empty = true;
+                                }
+                                else if(data.users === 2) {
+                                    self.opponentLogged = true;
+                                }
                             break;
+                            case 'logged':
+                                self.opponentLogged = true;
+                                break;
+                            case 'ready':
+                                self.opponentReady = true;
+                                break;
                         }
                     };
                 },
